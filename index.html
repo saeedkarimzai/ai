@@ -1,53 +1,107 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AI — Offline Learning Chatbot</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Offline AI</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:system-ui,Arial,sans-serif;background:#0b1020;color:#eaf0ff;height:100vh;display:flex;flex-direction:column}header{padding:14px 18px;border-bottom:1px solid #26304a;background:#11182b;display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap}h1{font-size:20px;margin:0}.status{font-size:12px;color:#7ee787}.actions{display:flex;gap:7px;flex-wrap:wrap}button{border:0;border-radius:9px;padding:9px 12px;background:#315bd6;color:#fff;cursor:pointer}button:hover{filter:brightness(1.12)}button.secondary{background:#26304a}.layout{display:flex;flex:1;min-height:0}.chat{flex:1;overflow:auto;padding:24px;display:flex;flex-direction:column;gap:12px;max-width:950px;width:100%;margin:auto}.msg{max-width:82%;padding:12px 15px;border-radius:16px;white-space:pre-wrap;line-height:1.5}.user{align-self:flex-end;background:#315bd6}.bot{align-self:flex-start;background:#1b243b;border:1px solid #2b3755}.composer{padding:14px;border-top:1px solid #26304a;background:#11182b}.row{max-width:950px;margin:auto;display:flex;gap:8px}.row input{flex:1;background:#0b1020;border:1px solid #34405f;color:#fff;padding:13px;border-radius:12px;outline:none}.side{width:285px;border-left:1px solid #26304a;background:#11182b;padding:15px;overflow:auto}.side h2{font-size:15px;margin:4px 0 10px}.card{background:#0b1020;border:1px solid #26304a;border-radius:10px;padding:10px;margin-bottom:10px;font-size:13px}.stat{display:flex;justify-content:space-between;margin:5px 0}.teach{display:grid;gap:7px}.teach input,.teach textarea{width:100%;background:#0b1020;border:1px solid #34405f;color:#fff;border-radius:8px;padding:9px;font:inherit}.teach textarea{min-height:75px;resize:vertical}.hint{opacity:.65;font-size:12px;line-height:1.4}.tag{display:inline-block;background:#26304a;padding:3px 7px;border-radius:999px;margin:2px;font-size:11px}@media(max-width:800px){.side{display:none}.msg{max-width:92%}}
-</style>
-</head>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,Arial;background:#0b1020;color:#eaf0ff;height:100vh;display:flex;flex-direction:column}header{padding:14px 18px;border-bottom:1px solid #26304a;background:#11182b;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}h1{margin:0;font-size:20px}.status{font-size:12px;color:#7ee787}button{border:0;border-radius:9px;padding:9px 12px;background:#315bd6;color:white;cursor:pointer}.secondary{background:#26304a}.actions{display:flex;gap:7px}.layout{display:flex;flex:1;min-height:0}.chat{flex:1;overflow:auto;padding:24px;max-width:950px;width:100%;margin:auto}.msg{max-width:82%;padding:12px 15px;border-radius:16px;white-space:pre-wrap;line-height:1.5;margin-bottom:12px}.user{margin-left:auto;background:#315bd6}.bot{background:#1b243b;border:1px solid #2b3755}.side{width:300px;border-left:1px solid #26304a;background:#11182b;padding:15px;overflow:auto}.card{background:#0b1020;border:1px solid #26304a;border-radius:10px;padding:11px;margin-bottom:10px;font-size:13px}.stat{display:flex;justify-content:space-between;margin:5px 0}.teach{display:grid;gap:7px}.teach input,.teach textarea{width:100%;background:#0b1020;border:1px solid #34405f;color:white;border-radius:8px;padding:9px;font:inherit}.teach textarea{min-height:70px}.hint{opacity:.7;font-size:12px;line-height:1.5}@media(max-width:800px){.side{display:none}.msg{max-width:94%}}
+</style></head>
 <body>
-<header><div><h1>Offline Learning AI</h1><span class="status">● Browser only • No API • No server</span></div><div class="actions"><button class="secondary" onclick="exportData()">Export</button><button class="secondary" onclick="document.getElementById('file').click()">Import</button><button class="secondary" onclick="clearChat()">Clear Chat</button><input id="file" type="file" accept="application/json" hidden onchange="importData(event)"></div></header>
-<div class="layout"><main id="chat" class="chat"></main><aside class="side"><h2>AI Memory</h2><div class="card"><div class="stat"><span>Facts learned</span><b id="factCount">0</b></div><div class="stat"><span>Messages</span><b id="msgCount">0</b></div><div class="stat"><span>Vocabulary</span><b id="wordCount">0</b></div></div><div class="card"><b>Teach the AI</b><div class="teach" style="margin-top:8px"><input id="factKey" placeholder="Topic / word"><textarea id="factValue" placeholder="What should it know?"></textarea><button onclick="teachFromPanel()">Learn</button></div></div><div class="card"><b>Try these</b><div class="hint" style="margin-top:7px">my name is Bob<br>what is my name?<br>teach me: JavaScript means web code<br>calculate 25 * 4<br>what does JavaScript mean?<br>remember that cats are animals</div></div><div class="card"><b>How it learns</b><div class="hint">It stores facts, conversations, words and learned question/answer pairs in this browser. It uses matching and simple language rules. It is not a full neural-network model yet.</div></div></aside></div>
-<div class="composer"><div class="row"><input id="input" autocomplete="off" placeholder="Talk to your AI..."/><button onclick="send()">Send</button></div></div>
+<header><div><h1>Offline Learning AI</h1><span class="status">● No API • No server • Chromebook friendly</span></div><div class="actions"><button class="secondary" onclick="exportData()">Export</button><button class="secondary" onclick="document.getElementById('file').click()">Import</button><button class="secondary" onclick="clearChat()">Clear Chat</button><input id="file" type="file" accept="application/json" hidden onchange="importData(event)"></div></header>
+<div class="layout"><main id="chat" class="chat"></main><aside class="side"><h3>AI Knowledge</h3><div class="card"><div class="stat"><span>Built-in topics</span><b id="topicCount">0</b></div><div class="stat"><span>Learned facts</span><b id="factCount">0</b></div><div class="stat"><span>Messages</span><b id="msgCount">0</b></div><div class="stat"><span>Vocabulary</span><b id="wordCount">0</b></div></div><div class="card"><b>Teach it</b><div class="teach" style="margin-top:8px"><input id="factKey" placeholder="Topic / word"><textarea id="factValue" placeholder="What should it know?"></textarea><button onclick="teachFromPanel()">Learn</button></div></div><div class="card"><b>Examples</b><div class="hint">What is HTML?<br>What is JavaScript?<br>What is an AI?<br>What is Canada?<br>What is gravity?<br>my name is Bob<br>remember that dogs are animals<br>calculate 25 * 4</div></div><div class="card"><b>Knowledge system</b><div class="hint">The AI starts with a built-in offline knowledge base. You can add your own facts and export the knowledge as JSON.</div></div></aside></div>
+<div style="padding:14px;border-top:1px solid #26304a;background:#11182b"><div style="max-width:950px;margin:auto;display:flex;gap:8px"><input id="input" autocomplete="off" placeholder="Talk to your AI..." style="flex:1;background:#0b1020;border:1px solid #34405f;color:white;padding:13px;border-radius:12px;outline:none"><button onclick="send()">Send</button></div></div>
 <script>
-const chat=document.getElementById('chat'),input=document.getElementById('input');
-const KEY='offlineAI_v2';
-let db=JSON.parse(localStorage.getItem(KEY)||'null')||{memory:{},history:[],learned:[],words:{}};
+const chat=document.getElementById('chat'),input=document.getElementById('input');const KEY='offlineAI_v3';
+const knowledge={
+html:'HTML (HyperText Markup Language) is used to structure content on web pages. It uses elements such as headings, paragraphs, links, images, buttons and forms.',
+css:'CSS (Cascading Style Sheets) controls the appearance and layout of web pages, including colors, spacing, fonts, sizes and responsive design.',
+javascript:'JavaScript is a programming language commonly used to make websites interactive. It can change web pages, respond to events, store data and run logic in the browser.',
+python:'Python is a general-purpose programming language known for readable syntax. It is used for automation, data science, web development, education and AI.',
+programming:'Programming means writing instructions that a computer can execute. Common programming languages include JavaScript, Python, Java, C++ and many others.',
+computer:'A computer is an electronic machine that processes data according to instructions. It commonly includes a processor, memory and storage.',
+cpu:'A CPU (central processing unit) executes instructions and performs calculations for a computer.',
+ram:'RAM is short-term computer memory used to hold data and programs that are actively being used.',
+storage:'Computer storage keeps data for longer periods. Examples include SSDs, hard drives and flash storage.',
+internet:'The internet is a worldwide network of connected computer systems that communicate using networking protocols.',
+website:'A website is a collection of web pages and other resources that can be accessed through a web browser.',
+browser:'A web browser is software used to open and interact with websites and web applications. Examples include Chrome, Firefox, Safari and Edge.',
+ai:'Artificial intelligence (AI) is a field of computing focused on systems that perform tasks that normally require aspects of human intelligence, such as recognizing patterns, understanding language or making predictions.',
+chatbot:'A chatbot is software that communicates with users through conversation. This project is an offline rule-and-knowledge-based chatbot.',
+api:'An API (application programming interface) is a defined way for software systems to communicate with each other.',
+algorithm:'An algorithm is a step-by-step method for solving a problem or completing a task.',
+database:'A database is an organized collection of data that software can store, search and update.',
+json:'JSON (JavaScript Object Notation) is a text format commonly used to store and exchange structured data.',
+github:'GitHub is a platform for hosting Git repositories and collaborating on software projects.',
+git:'Git is a version-control system used to track changes in files and collaborate on code.',
+science:'Science is a systematic way of studying the natural world using observation, testing, evidence and reasoning.',
+physics:'Physics studies matter, energy, motion, forces, space and time.',
+chemistry:'Chemistry studies matter, its properties, its structure and how substances interact and change.',
+biology:'Biology is the study of living organisms and life processes.',
+gravity:'Gravity is an attractive interaction between objects with mass. Near Earth, it causes objects to accelerate toward the ground.',
+atom:'An atom is a basic unit of ordinary matter made of a nucleus containing protons and neutrons surrounded by electrons.',
+energy:'Energy is the capacity to cause change or do work. It appears in forms such as kinetic, thermal, chemical and electrical energy.',
+planet:'A planet is a large astronomical body that orbits a star and meets the criteria used to classify planets.',
+earth:'Earth is the planet humans live on. It is the third planet from the Sun and has liquid surface water and a life-supporting atmosphere.',
+moon:'The Moon is Earth’s natural satellite. It orbits Earth and reflects light from the Sun.',
+sun:'The Sun is the star at the center of our solar system. It provides most of the energy that reaches Earth.',
+space:'Outer space is the region beyond Earth’s atmosphere. It contains stars, planets, galaxies, gas, dust and other objects.',
+solar:'The solar system is the Sun and the objects gravitationally bound to it, including planets, dwarf planets, moons, asteroids and comets.',
+canada:'Canada is a country in North America. Its capital city is Ottawa.',
+otttawa:'Ottawa is the capital city of Canada.',
+toronto:'Toronto is the capital of the Canadian province of Ontario and one of Canada’s largest cities.',
+ontario:'Ontario is a province of Canada. Toronto is its capital.',
+world:'Earth is the third planet from the Sun and the only planet currently known to support life.',
+water:'Water is a chemical compound made of hydrogen and oxygen, commonly written as H2O.',
+oxygen:'Oxygen is a chemical element with atomic number 8. It is important for human respiration and many chemical reactions.',
+carbon:'Carbon is a chemical element with atomic number 6 and is a major component of living organisms.',
+dog:'A dog is a domesticated mammal and a member of the species Canis lupus familiaris.',
+cat:'A cat is a small domesticated mammal commonly kept as a companion animal.',
+bird:'Birds are warm-blooded vertebrate animals with feathers, beaks and wings. Most bird species can fly, although some cannot.',
+mammal:'Mammals are vertebrate animals that have hair or fur and produce milk for their young.',
+fish:'Fish are aquatic vertebrate animals that generally breathe using gills.',
+math:'Mathematics is the study of numbers, quantities, patterns, structures, shapes and logical relationships.',
+addition:'Addition combines quantities to find a total.',
+subtraction:'Subtraction finds the difference between quantities.',
+multiplication:'Multiplication is repeated addition and combines equal groups.',
+division:'Division separates a quantity into equal groups or finds how many times one number fits into another.',
+triangle:'A triangle is a polygon with three sides and three angles.',
+square:'A square is a four-sided shape with four equal sides and four right angles.',
+photosynthesis:'Photosynthesis is the process plants and some other organisms use to convert light energy into chemical energy, using carbon dioxide and water to produce sugars and release oxygen.',
+weather:'Weather describes short-term atmospheric conditions such as temperature, precipitation, wind and cloud cover.',
+climate:'Climate describes long-term patterns of weather in a region.',
+robot:'A robot is a machine that can perform physical or computational tasks, often automatically or under control of software.',
+computerprogram:'A computer program is a set of instructions that tells a computer how to perform a task.'
+};
+let db=JSON.parse(localStorage.getItem(KEY)||'null')||{memory:{},history:[],words:{}};
 function save(){localStorage.setItem(KEY,JSON.stringify(db));updateStats()}
-function updateStats(){document.getElementById('factCount').textContent=Object.keys(db.memory).length;document.getElementById('msgCount').textContent=db.history.length;document.getElementById('wordCount').textContent=Object.keys(db.words).length}
-function add(text,who,saveIt=true){const d=document.createElement('div');d.className='msg '+who;d.textContent=text;chat.appendChild(d);chat.scrollTop=chat.scrollHeight;if(saveIt){db.history.push({text,who,time:Date.now()});save()}}
-function load(){chat.innerHTML='';if(db.history.length)db.history.forEach(x=>add(x.text,x.who,false));else add('Hi! I am your offline learning AI. I run entirely on this Chromebook browser. Teach me facts, ask questions, or give me examples.','bot',false);updateStats()}
+function updateStats(){topicCount.textContent=Object.keys(knowledge).length;factCount.textContent=Object.keys(db.memory).length;msgCount.textContent=db.history.length;wordCount.textContent=Object.keys(db.words).length}
 function norm(s){return s.toLowerCase().replace(/[^a-z0-9\s+\-*/().?]/g,' ').replace(/\s+/g,' ').trim()}
 function tokens(s){return [...new Set(norm(s).split(' ').filter(x=>x.length>1))]}
-function learnWords(text){tokens(text).forEach(w=>db.words[w]=(db.words[w]||0)+1)}
-function similarity(a,b){const A=new Set(tokens(a)),B=new Set(tokens(b));if(!A.size||!B.size)return 0;let common=0;A.forEach(x=>{if(B.has(x))common++});return common/Math.max(A.size,B.size)}
+function learnWords(t){tokens(t).forEach(w=>db.words[w]=(db.words[w]||0)+1)}
+function add(text,who,saveIt=true){const d=document.createElement('div');d.className='msg '+who;d.textContent=text;chat.appendChild(d);chat.scrollTop=chat.scrollHeight;if(saveIt){db.history.push({text,who,time:Date.now()});save()}}
+function similarity(a,b){const A=new Set(tokens(a)),B=new Set(tokens(b));if(!A.size||!B.size)return 0;let n=0;A.forEach(x=>B.has(x)&&(n++));return n/Math.max(A.size,B.size)}
 function calc(s){if(!/^[0-9+\-*/().\s]+$/.test(s))return null;try{const n=Function('"use strict";return ('+s+')')();return Number.isFinite(n)?String(n):null}catch{return null}}
-function setFact(key,value){key=norm(key);if(!key)return false;db.memory[key]=value.trim();learnWords(key+' '+value);save();return true}
-function answer(raw){const s=norm(raw);learnWords(raw);
- if(!s)return 'Say something and I will respond.';
- let m=raw.match(/^teach me\s*:\s*(.+?)\s+means\s+(.+)$/i);if(m){setFact(m[1],m[2]);return 'Learned: '+m[1].trim()+' means '+m[2].trim()+'. I saved it in this browser.'}
- m=raw.match(/^remember that\s+(.+?)\s+(?:is|are|means)\s+(.+)$/i);if(m){setFact(m[1],m[2]);return 'I learned that '+m[1].trim()+' is '+m[2].trim()+'.'}
- m=raw.match(/\bmy name is\s+(.+)/i);if(m){setFact('__name__',m[1]);return 'Nice to meet you, '+m[1].trim()+'. I will remember your name on this Chromebook.'}
- if(s.includes('what is my name')||s.includes('whats my name'))return db.memory.__name__?'Your name is '+db.memory.__name__+'.':'You have not taught me your name yet.';
- if(s.includes('forget my name')){delete db.memory.__name__;save();return 'I forgot your saved name.'}
- let expression=s.replace(/^calculate\s+/,'').replace(/^what is\s+/,'');let result=calc(expression);if(result!==null)return 'The answer is '+result+'.';
- for(const k of Object.keys(db.memory).filter(k=>k!=='__name__').sort((a,b)=>b.length-a.length)){if(s.includes(k)||similarity(s,k)>0.65)return db.memory[k]}
- let best=null,bestScore=0;for(const item of db.learned){const score=similarity(s,item.q);if(score>bestScore){bestScore=score;best=item}}if(best&&bestScore>=0.55)return best.a;
- if(/^(hi|hello|hey|yo)\b/.test(s))return 'Hey! What do you want to work on?';
- if(s.includes('who are you'))return 'I am an offline learning chatbot. I do not call an API or send your chat to a server.';
- if(s.includes('how are you'))return 'I am running normally. Teach me something new.';
- if(s.includes('help')||s.includes('what can you do'))return 'I can remember facts, learn question-and-answer examples, calculate basic math, store chat history, and export/import my knowledge.';
- if(s.includes('thank'))return 'You are welcome.';
- return 'I do not know that yet. You can teach me by saying “teach me: topic means information”, or teach me a direct answer below.'}
-function send(){const raw=input.value.trim();if(!raw)return;add(raw,'user');input.value='';setTimeout(()=>{const reply=answer(raw);add(reply,'bot');save()},100)}
-function teachFromPanel(){const k=document.getElementById('factKey').value.trim(),v=document.getElementById('factValue').value.trim();if(!k||!v)return;setFact(k,v);document.getElementById('factKey').value='';document.getElementById('factValue').value='';add('Learn this: '+k+' = '+v,'user');add('Learned. I saved that fact locally.','bot')}
-function exportData(){const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='offline-ai-memory.json';a.click();URL.revokeObjectURL(a.href)}
-function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!x.memory||!x.history)throw Error();db=x;save();load();add('Imported AI memory successfully.','bot')}catch{alert('That file is not valid AI memory.')}};r.readAsText(f);e.target.value=''}
+function fact(k,v){db.memory[norm(k)]=v.trim();learnWords(k+' '+v);save()}
+function findKnowledge(s){for(const k of Object.keys(db.memory).sort((a,b)=>b.length-a.length))if(s.includes(k))return db.memory[k];let best=null,score=0;for(const k of Object.keys(knowledge)){let q=similarity(s,k);if(s.includes(k))q+=.5;if(q>score){score=q;best=k}}return score>=.5?knowledge[best]:null}
+function answer(raw){const s=norm(raw);learnWords(raw);if(!s)return 'Say something and I will respond.';
+let m=raw.match(/^teach me\s*:\s*(.+?)\s+means\s+(.+)$/i);if(m){fact(m[1],m[2]);return 'Learned: '+m[1].trim()+' means '+m[2].trim()+'.'}
+m=raw.match(/^remember that\s+(.+?)\s+(?:is|are|means)\s+(.+)$/i);if(m){fact(m[1],m[2]);return 'I learned that '+m[1].trim()+' is '+m[2].trim()+'.'}
+m=raw.match(/\bmy name is\s+(.+)/i);if(m){fact('__name__',m[1]);return 'Nice to meet you, '+m[1].trim()+'. I will remember your name.'}
+if(s.includes('what is my name')||s.includes('whats my name'))return db.memory.__name__?'Your name is '+db.memory.__name__+'.':'You have not taught me your name yet.';
+if(s.includes('forget my name')){delete db.memory.__name__;save();return 'I forgot your saved name.'}
+let e=s.replace(/^calculate\s+/,'').replace(/^what is\s+/,'');let r=calc(e);if(r!==null)return 'The answer is '+r+'.';
+if(/^(hi|hello|hey|yo)\b/.test(s))return 'Hey! What do you want to learn about?';
+if(s.includes('who are you'))return 'I am an offline AI chatbot. I use built-in knowledge, your saved facts and browser storage. I do not use an API.';
+if(s.includes('how are you'))return 'I am running normally. My knowledge base is loaded and ready.';
+if(s.includes('what can you do')||s==='help')return 'I can answer from my built-in knowledge, remember facts you teach me, do basic math, learn new topics, save chat history and export my knowledge.';
+if(s.includes('thank'))return 'You are welcome.';
+let k=findKnowledge(s);if(k)return k;
+return 'I do not know that yet. Teach me with “teach me: topic means information” and I will save it locally.'}
+function send(){const raw=input.value.trim();if(!raw)return;add(raw,'user');input.value='';setTimeout(()=>add(answer(raw),'bot'),80)}
+function teachFromPanel(){const k=factKey.value.trim(),v=factValue.value.trim();if(!k||!v)return;fact(k,v);factKey.value='';factValue.value='';add('Learn this: '+k+' = '+v,'user');add('Learned. I saved that locally.','bot')}
+function exportData(){const all={memory:db.memory,history:db.history,words:db.words,builtInKnowledge:knowledge};const b=new Blob([JSON.stringify(all,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='offline-ai-knowledge.json';a.click();URL.revokeObjectURL(a.href)}
+function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);db.memory=x.memory||{};db.history=x.history||[];db.words=x.words||{};save();load();add('Knowledge imported successfully.','bot')}catch{alert('Invalid AI knowledge file.')}};r.readAsText(f);e.target.value=''}
 function clearChat(){db.history=[];save();load()}
+function load(){chat.innerHTML='';if(db.history.length)db.history.forEach(x=>add(x.text,x.who,false));else add('Hi! I already know a bunch of basic topics. Ask me about computers, programming, science, space, animals, Canada, math and more.','bot',false);updateStats()}
 input.addEventListener('keydown',e=>{if(e.key==='Enter')send()});load();input.focus();
-</script>
-</body>
-</html>
+</script></body></html>
