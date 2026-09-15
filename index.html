@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Offline AI Chatbot</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,Arial;background:#0b1020;color:#eaf0ff;height:100vh;display:flex;flex-direction:column}header{padding:16px 20px;border-bottom:1px solid #26304a;background:#11182b;display:flex;justify-content:space-between;align-items:center}h1{font-size:20px;margin:0}.status{font-size:12px;color:#7ee787}.chat{flex:1;overflow:auto;padding:24px;display:flex;flex-direction:column;gap:12px;max-width:950px;width:100%;margin:auto}.msg{max-width:78%;padding:12px 15px;border-radius:16px;white-space:pre-wrap;line-height:1.45}.user{align-self:flex-end;background:#315bd6}.bot{align-self:flex-start;background:#1b243b;border:1px solid #2b3755}.composer{padding:14px;border-top:1px solid #26304a;background:#11182b}.row{max-width:950px;margin:auto;display:flex;gap:8px}.row input{flex:1;background:#0b1020;border:1px solid #34405f;color:white;padding:13px;border-radius:12px;outline:none}.row button,header button{border:0;border-radius:10px;padding:10px 14px;background:#315bd6;color:white;cursor:pointer}.row button:hover,header button:hover{filter:brightness(1.12)}small{opacity:.6;display:block;margin-top:5px}
+</style>
+</head>
+<body>
+<header><h1>Offline AI Chatbot</h1><div><span class="status">● Offline / No API</span> <button onclick="clearChat()">Clear</button></div></header>
+<main id="chat" class="chat"></main>
+<div class="composer"><div class="row"><input id="input" autocomplete="off" placeholder="Talk to your AI..."/><button onclick="send()">Send</button></div></div>
+<script>
+const chat=document.getElementById('chat'), input=document.getElementById('input');
+let memory=JSON.parse(localStorage.getItem('offlineAI_memory')||'{}');
+let history=JSON.parse(localStorage.getItem('offlineAI_history')||'[]');
+function save(){localStorage.setItem('offlineAI_memory',JSON.stringify(memory));localStorage.setItem('offlineAI_history',JSON.stringify(history));}
+function add(text,who,saveIt=true){const d=document.createElement('div');d.className='msg '+who;d.textContent=text;chat.appendChild(d);chat.scrollTop=chat.scrollHeight;if(saveIt){history.push({text,who});save()}}
+function load(){if(history.length)history.forEach(x=>add(x.text,x.who,false));else add('Hi! I am your offline AI. I do not use an API. I can chat, remember things you teach me, do simple math, and improve my stored responses over time. Try: “my name is Bob”, “what is my name?”, “teach me: JavaScript means code for web pages”, or “calculate 25 * 4”.','bot',false)}
+function normalize(s){return s.toLowerCase().replace(/[^a-z0-9\s+\-*/().]/g,' ').replace(/\s+/g,' ').trim()}
+function calc(s){if(!/^[0-9+\-*/().\s]+$/.test(s))return null;try{let n=Function('"use strict";return ('+s+')')();return Number.isFinite(n)?String(n):null}catch{return null}}
+function answer(raw){let s=normalize(raw);
+ if(!s)return 'Say something and I will respond.';
+ if(/^teach me\s*:/.test(s)){let x=raw.split(':').slice(1).join(':').trim();let m=x.match(/^(.+?)\s+means\s+(.+)$/i);if(m){memory[m[1].toLowerCase().trim()]=m[2].trim();save();return 'Learned it. I saved that in this browser.'}return 'Use: teach me: JavaScript means code for web pages';}
+ let name=raw.match(/\bmy name is\s+(.+)/i);if(name){memory.name=name[1].trim();save();return 'Nice to meet you, '+memory.name+'. I will remember your name on this device.'}
+ if(s.includes('what is my name')||s.includes('whats my name'))return memory.name?'Your name is '+memory.name+'.':'You have not taught me your name yet.';
+ if(s.includes('forget my name')){delete memory.name;save();return 'I forgot your saved name.'}
+ let expression=s.replace(/^calculate\s+/,'').replace(/^what is\s+/,'');let result=calc(expression);if(result!==null)return 'The answer is '+result+'.';
+ for(const k of Object.keys(memory)){if(k!=='name'&&s.includes(k))return memory[k]}
+ if(/^(hi|hello|hey|yo)\b/.test(s))return 'Hey! What do you want to work on?';
+ if(s.includes('who are you'))return 'I am a small offline chatbot running entirely in your browser. No API or server is required.';
+ if(s.includes('how are you'))return 'I am running normally. Give me something to learn.';
+ if(s.includes('help')||s.includes('what can you do'))return 'I can chat with simple rules, remember facts you teach me, answer saved facts, and calculate basic math. Everything is stored locally in your browser.';
+ if(s.includes('thank'))return 'You are welcome.';
+ const replies=['Interesting. Tell me more.','I understand. What should I learn from that?','Got it. I am still learning, so you can teach me more.','That makes sense.'];return replies[Math.floor(Math.random()*replies.length)];}
+function send(){let raw=input.value.trim();if(!raw)return;add(raw,'user');input.value='';setTimeout(()=>add(answer(raw),'bot'),120)}
+function clearChat(){history=[];save();chat.innerHTML='';load()}
+input.addEventListener('keydown',e=>{if(e.key==='Enter')send()});load();input.focus();
+</script>
+</body>
+</html>
