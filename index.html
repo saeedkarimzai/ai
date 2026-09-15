@@ -3,40 +3,50 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Offline AI Chatbot</title>
+<title>AI — Offline Learning Chatbot</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:system-ui,Arial;background:#0b1020;color:#eaf0ff;height:100vh;display:flex;flex-direction:column}header{padding:16px 20px;border-bottom:1px solid #26304a;background:#11182b;display:flex;justify-content:space-between;align-items:center}h1{font-size:20px;margin:0}.status{font-size:12px;color:#7ee787}.chat{flex:1;overflow:auto;padding:24px;display:flex;flex-direction:column;gap:12px;max-width:950px;width:100%;margin:auto}.msg{max-width:78%;padding:12px 15px;border-radius:16px;white-space:pre-wrap;line-height:1.45}.user{align-self:flex-end;background:#315bd6}.bot{align-self:flex-start;background:#1b243b;border:1px solid #2b3755}.composer{padding:14px;border-top:1px solid #26304a;background:#11182b}.row{max-width:950px;margin:auto;display:flex;gap:8px}.row input{flex:1;background:#0b1020;border:1px solid #34405f;color:white;padding:13px;border-radius:12px;outline:none}.row button,header button{border:0;border-radius:10px;padding:10px 14px;background:#315bd6;color:white;cursor:pointer}.row button:hover,header button:hover{filter:brightness(1.12)}small{opacity:.6;display:block;margin-top:5px}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,Arial,sans-serif;background:#0b1020;color:#eaf0ff;height:100vh;display:flex;flex-direction:column}header{padding:14px 18px;border-bottom:1px solid #26304a;background:#11182b;display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap}h1{font-size:20px;margin:0}.status{font-size:12px;color:#7ee787}.actions{display:flex;gap:7px;flex-wrap:wrap}button{border:0;border-radius:9px;padding:9px 12px;background:#315bd6;color:#fff;cursor:pointer}button:hover{filter:brightness(1.12)}button.secondary{background:#26304a}.layout{display:flex;flex:1;min-height:0}.chat{flex:1;overflow:auto;padding:24px;display:flex;flex-direction:column;gap:12px;max-width:950px;width:100%;margin:auto}.msg{max-width:82%;padding:12px 15px;border-radius:16px;white-space:pre-wrap;line-height:1.5}.user{align-self:flex-end;background:#315bd6}.bot{align-self:flex-start;background:#1b243b;border:1px solid #2b3755}.composer{padding:14px;border-top:1px solid #26304a;background:#11182b}.row{max-width:950px;margin:auto;display:flex;gap:8px}.row input{flex:1;background:#0b1020;border:1px solid #34405f;color:#fff;padding:13px;border-radius:12px;outline:none}.side{width:285px;border-left:1px solid #26304a;background:#11182b;padding:15px;overflow:auto}.side h2{font-size:15px;margin:4px 0 10px}.card{background:#0b1020;border:1px solid #26304a;border-radius:10px;padding:10px;margin-bottom:10px;font-size:13px}.stat{display:flex;justify-content:space-between;margin:5px 0}.teach{display:grid;gap:7px}.teach input,.teach textarea{width:100%;background:#0b1020;border:1px solid #34405f;color:#fff;border-radius:8px;padding:9px;font:inherit}.teach textarea{min-height:75px;resize:vertical}.hint{opacity:.65;font-size:12px;line-height:1.4}.tag{display:inline-block;background:#26304a;padding:3px 7px;border-radius:999px;margin:2px;font-size:11px}@media(max-width:800px){.side{display:none}.msg{max-width:92%}}
 </style>
 </head>
 <body>
-<header><h1>Offline AI Chatbot</h1><div><span class="status">● Offline / No API</span> <button onclick="clearChat()">Clear</button></div></header>
-<main id="chat" class="chat"></main>
+<header><div><h1>Offline Learning AI</h1><span class="status">● Browser only • No API • No server</span></div><div class="actions"><button class="secondary" onclick="exportData()">Export</button><button class="secondary" onclick="document.getElementById('file').click()">Import</button><button class="secondary" onclick="clearChat()">Clear Chat</button><input id="file" type="file" accept="application/json" hidden onchange="importData(event)"></div></header>
+<div class="layout"><main id="chat" class="chat"></main><aside class="side"><h2>AI Memory</h2><div class="card"><div class="stat"><span>Facts learned</span><b id="factCount">0</b></div><div class="stat"><span>Messages</span><b id="msgCount">0</b></div><div class="stat"><span>Vocabulary</span><b id="wordCount">0</b></div></div><div class="card"><b>Teach the AI</b><div class="teach" style="margin-top:8px"><input id="factKey" placeholder="Topic / word"><textarea id="factValue" placeholder="What should it know?"></textarea><button onclick="teachFromPanel()">Learn</button></div></div><div class="card"><b>Try these</b><div class="hint" style="margin-top:7px">my name is Bob<br>what is my name?<br>teach me: JavaScript means web code<br>calculate 25 * 4<br>what does JavaScript mean?<br>remember that cats are animals</div></div><div class="card"><b>How it learns</b><div class="hint">It stores facts, conversations, words and learned question/answer pairs in this browser. It uses matching and simple language rules. It is not a full neural-network model yet.</div></div></aside></div>
 <div class="composer"><div class="row"><input id="input" autocomplete="off" placeholder="Talk to your AI..."/><button onclick="send()">Send</button></div></div>
 <script>
-const chat=document.getElementById('chat'), input=document.getElementById('input');
-let memory=JSON.parse(localStorage.getItem('offlineAI_memory')||'{}');
-let history=JSON.parse(localStorage.getItem('offlineAI_history')||'[]');
-function save(){localStorage.setItem('offlineAI_memory',JSON.stringify(memory));localStorage.setItem('offlineAI_history',JSON.stringify(history));}
-function add(text,who,saveIt=true){const d=document.createElement('div');d.className='msg '+who;d.textContent=text;chat.appendChild(d);chat.scrollTop=chat.scrollHeight;if(saveIt){history.push({text,who});save()}}
-function load(){if(history.length)history.forEach(x=>add(x.text,x.who,false));else add('Hi! I am your offline AI. I do not use an API. I can chat, remember things you teach me, do simple math, and improve my stored responses over time. Try: “my name is Bob”, “what is my name?”, “teach me: JavaScript means code for web pages”, or “calculate 25 * 4”.','bot',false)}
-function normalize(s){return s.toLowerCase().replace(/[^a-z0-9\s+\-*/().]/g,' ').replace(/\s+/g,' ').trim()}
-function calc(s){if(!/^[0-9+\-*/().\s]+$/.test(s))return null;try{let n=Function('"use strict";return ('+s+')')();return Number.isFinite(n)?String(n):null}catch{return null}}
-function answer(raw){let s=normalize(raw);
+const chat=document.getElementById('chat'),input=document.getElementById('input');
+const KEY='offlineAI_v2';
+let db=JSON.parse(localStorage.getItem(KEY)||'null')||{memory:{},history:[],learned:[],words:{}};
+function save(){localStorage.setItem(KEY,JSON.stringify(db));updateStats()}
+function updateStats(){document.getElementById('factCount').textContent=Object.keys(db.memory).length;document.getElementById('msgCount').textContent=db.history.length;document.getElementById('wordCount').textContent=Object.keys(db.words).length}
+function add(text,who,saveIt=true){const d=document.createElement('div');d.className='msg '+who;d.textContent=text;chat.appendChild(d);chat.scrollTop=chat.scrollHeight;if(saveIt){db.history.push({text,who,time:Date.now()});save()}}
+function load(){chat.innerHTML='';if(db.history.length)db.history.forEach(x=>add(x.text,x.who,false));else add('Hi! I am your offline learning AI. I run entirely on this Chromebook browser. Teach me facts, ask questions, or give me examples.','bot',false);updateStats()}
+function norm(s){return s.toLowerCase().replace(/[^a-z0-9\s+\-*/().?]/g,' ').replace(/\s+/g,' ').trim()}
+function tokens(s){return [...new Set(norm(s).split(' ').filter(x=>x.length>1))]}
+function learnWords(text){tokens(text).forEach(w=>db.words[w]=(db.words[w]||0)+1)}
+function similarity(a,b){const A=new Set(tokens(a)),B=new Set(tokens(b));if(!A.size||!B.size)return 0;let common=0;A.forEach(x=>{if(B.has(x))common++});return common/Math.max(A.size,B.size)}
+function calc(s){if(!/^[0-9+\-*/().\s]+$/.test(s))return null;try{const n=Function('"use strict";return ('+s+')')();return Number.isFinite(n)?String(n):null}catch{return null}}
+function setFact(key,value){key=norm(key);if(!key)return false;db.memory[key]=value.trim();learnWords(key+' '+value);save();return true}
+function answer(raw){const s=norm(raw);learnWords(raw);
  if(!s)return 'Say something and I will respond.';
- if(/^teach me\s*:/.test(s)){let x=raw.split(':').slice(1).join(':').trim();let m=x.match(/^(.+?)\s+means\s+(.+)$/i);if(m){memory[m[1].toLowerCase().trim()]=m[2].trim();save();return 'Learned it. I saved that in this browser.'}return 'Use: teach me: JavaScript means code for web pages';}
- let name=raw.match(/\bmy name is\s+(.+)/i);if(name){memory.name=name[1].trim();save();return 'Nice to meet you, '+memory.name+'. I will remember your name on this device.'}
- if(s.includes('what is my name')||s.includes('whats my name'))return memory.name?'Your name is '+memory.name+'.':'You have not taught me your name yet.';
- if(s.includes('forget my name')){delete memory.name;save();return 'I forgot your saved name.'}
+ let m=raw.match(/^teach me\s*:\s*(.+?)\s+means\s+(.+)$/i);if(m){setFact(m[1],m[2]);return 'Learned: '+m[1].trim()+' means '+m[2].trim()+'. I saved it in this browser.'}
+ m=raw.match(/^remember that\s+(.+?)\s+(?:is|are|means)\s+(.+)$/i);if(m){setFact(m[1],m[2]);return 'I learned that '+m[1].trim()+' is '+m[2].trim()+'.'}
+ m=raw.match(/\bmy name is\s+(.+)/i);if(m){setFact('__name__',m[1]);return 'Nice to meet you, '+m[1].trim()+'. I will remember your name on this Chromebook.'}
+ if(s.includes('what is my name')||s.includes('whats my name'))return db.memory.__name__?'Your name is '+db.memory.__name__+'.':'You have not taught me your name yet.';
+ if(s.includes('forget my name')){delete db.memory.__name__;save();return 'I forgot your saved name.'}
  let expression=s.replace(/^calculate\s+/,'').replace(/^what is\s+/,'');let result=calc(expression);if(result!==null)return 'The answer is '+result+'.';
- for(const k of Object.keys(memory)){if(k!=='name'&&s.includes(k))return memory[k]}
+ for(const k of Object.keys(db.memory).filter(k=>k!=='__name__').sort((a,b)=>b.length-a.length)){if(s.includes(k)||similarity(s,k)>0.65)return db.memory[k]}
+ let best=null,bestScore=0;for(const item of db.learned){const score=similarity(s,item.q);if(score>bestScore){bestScore=score;best=item}}if(best&&bestScore>=0.55)return best.a;
  if(/^(hi|hello|hey|yo)\b/.test(s))return 'Hey! What do you want to work on?';
- if(s.includes('who are you'))return 'I am a small offline chatbot running entirely in your browser. No API or server is required.';
- if(s.includes('how are you'))return 'I am running normally. Give me something to learn.';
- if(s.includes('help')||s.includes('what can you do'))return 'I can chat with simple rules, remember facts you teach me, answer saved facts, and calculate basic math. Everything is stored locally in your browser.';
+ if(s.includes('who are you'))return 'I am an offline learning chatbot. I do not call an API or send your chat to a server.';
+ if(s.includes('how are you'))return 'I am running normally. Teach me something new.';
+ if(s.includes('help')||s.includes('what can you do'))return 'I can remember facts, learn question-and-answer examples, calculate basic math, store chat history, and export/import my knowledge.';
  if(s.includes('thank'))return 'You are welcome.';
- const replies=['Interesting. Tell me more.','I understand. What should I learn from that?','Got it. I am still learning, so you can teach me more.','That makes sense.'];return replies[Math.floor(Math.random()*replies.length)];}
-function send(){let raw=input.value.trim();if(!raw)return;add(raw,'user');input.value='';setTimeout(()=>add(answer(raw),'bot'),120)}
-function clearChat(){history=[];save();chat.innerHTML='';load()}
+ return 'I do not know that yet. You can teach me by saying “teach me: topic means information”, or teach me a direct answer below.'}
+function send(){const raw=input.value.trim();if(!raw)return;add(raw,'user');input.value='';setTimeout(()=>{const reply=answer(raw);add(reply,'bot');save()},100)}
+function teachFromPanel(){const k=document.getElementById('factKey').value.trim(),v=document.getElementById('factValue').value.trim();if(!k||!v)return;setFact(k,v);document.getElementById('factKey').value='';document.getElementById('factValue').value='';add('Learn this: '+k+' = '+v,'user');add('Learned. I saved that fact locally.','bot')}
+function exportData(){const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='offline-ai-memory.json';a.click();URL.revokeObjectURL(a.href)}
+function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!x.memory||!x.history)throw Error();db=x;save();load();add('Imported AI memory successfully.','bot')}catch{alert('That file is not valid AI memory.')}};r.readAsText(f);e.target.value=''}
+function clearChat(){db.history=[];save();load()}
 input.addEventListener('keydown',e=>{if(e.key==='Enter')send()});load();input.focus();
 </script>
 </body>
