@@ -1,130 +1,38 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Homework Helper</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:system-ui,Arial;background:#0b1020;color:#eef2ff}header{padding:16px 20px;background:#11182b;border-bottom:1px solid #293552;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}h1{margin:0;font-size:21px}.sub{opacity:.7;font-size:12px}.wrap{max-width:1100px;margin:auto;padding:18px;display:grid;grid-template-columns:1fr 300px;gap:15px}.card{background:#11182b;border:1px solid #293552;border-radius:14px;padding:15px;margin-bottom:15px}textarea,input,select{width:100%;background:#0b1020;color:#fff;border:1px solid #394766;border-radius:9px;padding:10px;font:inherit}textarea{min-height:150px;resize:vertical}button{border:0;border-radius:9px;padding:10px 13px;background:#315bd6;color:#fff;cursor:pointer;font-weight:600}.secondary{background:#293552}.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.answer{white-space:pre-wrap;line-height:1.6;background:#0b1020;border:1px solid #293552;border-radius:10px;padding:13px;min-height:100px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tool{padding:10px;border:1px solid #293552;border-radius:10px;background:#0b1020;cursor:pointer}.tool:hover{border-color:#5574c9}.small{font-size:12px;opacity:.7}.files{margin-top:10px}.filelist{display:flex;flex-direction:column;gap:7px;margin-top:10px}.fileitem{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px;border:1px solid #293552;border-radius:9px;background:#0b1020;font-size:13px}.fileitem button{padding:6px 9px;font-size:12px}.drop{border:1px dashed #5574c9;border-radius:10px;padding:16px;text-align:center;cursor:pointer;margin-top:10px}.drop:hover{background:#151e35}@media(max-width:800px){.wrap{grid-template-columns:1fr}}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,Arial;background:#0b1020;color:#eef2ff}header{padding:16px 20px;background:#11182b;border-bottom:1px solid #293552;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}h1{margin:0;font-size:21px}.sub{opacity:.7;font-size:12px}.wrap{max-width:1100px;margin:auto;padding:18px;display:grid;grid-template-columns:1fr 300px;gap:15px}.card{background:#11182b;border:1px solid #293552;border-radius:14px;padding:15px;margin-bottom:15px}textarea,input,select{width:100%;background:#0b1020;color:#fff;border:1px solid #394766;border-radius:9px;padding:10px;font:inherit}textarea{min-height:150px;resize:vertical}button{border:0;border-radius:9px;padding:10px 13px;background:#315bd6;color:#fff;cursor:pointer;font-weight:600}.secondary{background:#293552}.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.answer{white-space:pre-wrap;line-height:1.6;background:#0b1020;border:1px solid #293552;border-radius:10px;padding:13px;min-height:100px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tool{padding:10px;border:1px solid #293552;border-radius:10px;background:#0b1020;cursor:pointer}.tool:hover{border-color:#5574c9}.small{font-size:12px;opacity:.7}.filelist{display:flex;flex-direction:column;gap:8px;margin-top:10px}.fileitem{padding:10px;border:1px solid #293552;border-radius:9px;background:#0b1020;font-size:13px}.filetop{display:flex;justify-content:space-between;gap:8px;align-items:center}.fileitem button{padding:6px 9px;font-size:12px}.fileitem audio{width:100%;margin-top:8px}.drop{border:1px dashed #5574c9;border-radius:10px;padding:16px;text-align:center;cursor:pointer;margin-top:10px}.drop:hover{background:#151e35}@media(max-width:800px){.wrap{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<header><div><h1>Homework Helper</h1><div class="sub">Free • browser-based • no API • works offline</div></div><div class="sub">Add homework files and ask questions about them.</div></header>
-<div class="wrap">
-<main>
-<div class="card">
-<h3>Ask a question</h3>
-<select id="subject"><option>General</option><option>Math</option><option>Science</option><option>English</option><option>History</option><option>Computer Science</option></select>
-<textarea id="question" placeholder="Type your homework question here..."></textarea>
-<div class="row"><button onclick="help()">Help me</button><button class="secondary" onclick="clearAll()">Clear</button></div>
-</div>
-<div class="card">
-<h3>Add files</h3>
-<div class="small">Choose one or many files. Text-based files are read directly in your browser. Images, PDFs and other files can be attached and viewed here; the helper can use extracted text when your browser can read it.</div>
-<div class="drop" onclick="$('fileInput').click()">Click to choose files</div>
-<input id="fileInput" type="file" multiple style="display:none">
-<div id="fileList" class="filelist"></div>
-<div class="row"><button class="secondary" onclick="clearFiles()">Remove all files</button></div>
-</div>
+<header><div><h1>Homework Helper</h1><div class="sub">Free • browser-based • no API • works offline</div></div><div class="sub">Add homework files, including MP3 audio.</div></header>
+<div class="wrap"><main>
+<div class="card"><h3>Ask a question</h3><select id="subject"><option>General</option><option>Math</option><option>Science</option><option>English</option><option>History</option><option>Computer Science</option></select><textarea id="question" placeholder="Type your homework question here..."></textarea><div class="row"><button onclick="help()">Help me</button><button class="secondary" onclick="clearAll()">Clear</button></div></div>
+<div class="card"><h3>Add files</h3><div class="small">Choose one or many files. Text files are read directly. MP3/audio files can be played here and attached to your homework session. Other files are attached for reference.</div><div class="drop" onclick="$('fileInput').click()">Click to choose files</div><input id="fileInput" type="file" multiple style="display:none"><div id="fileList" class="filelist"></div><div class="row"><button class="secondary" onclick="clearFiles()">Remove all files</button></div></div>
 <div class="card"><h3>Helper</h3><div id="answer" class="answer">Your explanation will appear here.</div></div>
 <div class="card"><h3>Quick math</h3><input id="math" placeholder="Example: (25 * 4) + 18 / 2"><div class="row"><button onclick="calculate()">Calculate</button></div><div id="mathAnswer" class="answer" style="margin-top:10px;min-height:50px"></div></div>
-</main>
-<aside>
-<div class="card"><h3>Study tools</h3><div class="grid">
-<div class="tool" onclick="setPrompt('Explain this in simple words: ')">Simple explanation</div>
-<div class="tool" onclick="setPrompt('Give me a step-by-step way to solve this: ')">Step by step</div>
-<div class="tool" onclick="setPrompt('Quiz me about: ')">Quiz me</div>
-<div class="tool" onclick="setPrompt('Make flashcards about: ')">Flashcards</div>
-</div></div>
-<div class="card"><h3>Try these</h3><div class="small">• Upload a PDF/text file and ask what it means<br>• Upload notes and ask for key points<br>• Solve 3x + 5 = 20<br>• Explain photosynthesis<br>• What caused the Industrial Revolution?<br>• Calculate the area of a triangle</div></div>
-</aside>
-</div>
+</main><aside>
+<div class="card"><h3>Study tools</h3><div class="grid"><div class="tool" onclick="setPrompt('Explain this in simple words: ')">Simple explanation</div><div class="tool" onclick="setPrompt('Give me a step-by-step way to solve this: ')">Step by step</div><div class="tool" onclick="setPrompt('Quiz me about: ')">Quiz me</div><div class="tool" onclick="setPrompt('Make flashcards about: ')">Flashcards</div></div></div>
+<div class="card"><h3>Try these</h3><div class="small">• Upload notes and ask for key points<br>• Add an MP3 and play it while studying<br>• Solve 3x + 5 = 20<br>• Explain photosynthesis<br>• Calculate the area of a triangle</div></div>
+</aside></div>
 <script>
-const $=id=>document.getElementById(id);
-let uploadedFiles=[];
-const knowledge={
-photosynthesis:'Photosynthesis is how plants and some other organisms use light energy to make chemical energy. They use carbon dioxide and water to make glucose, and oxygen is released.',
-gravity:'Gravity is the attraction between objects that have mass. Near Earth, gravity pulls objects toward Earth and gives falling objects an acceleration of about 9.8 m/s².',
-atom:'An atom is a basic unit of matter. It contains protons and neutrons in a nucleus, with electrons around the nucleus.',
-cell:'A cell is the basic structural and functional unit of living organisms. Plant and animal cells contain structures called organelles that perform different jobs.',
-html:'HTML stands for HyperText Markup Language. It provides the structure of a web page using elements such as headings, paragraphs, links, images and forms.',
-javascript:'JavaScript is a programming language commonly used to add logic and interactivity to websites and web applications.',
-css:'CSS stands for Cascading Style Sheets. It controls the visual appearance and layout of HTML content.',
-metaphor:'A metaphor compares two unlike things by saying one thing is another, without using “like” or “as”. Example: “The classroom was a zoo.”',
-simile:'A simile compares two things using words such as “like” or “as”. Example: “The wind was like a whistle.”',
-industrial:'The Industrial Revolution was a period of major economic and technological change. Manufacturing increasingly moved from hand production toward machines and factories, beginning in Britain in the 18th century and spreading to other regions.',
-canada:'Canada is a country in North America. Its capital is Ottawa, and it is a federal parliamentary constitutional monarchy.',
-democracy:'A democracy is a system of government in which political power is exercised by the people, directly or through elected representatives.',
-ecosystem:'An ecosystem includes living organisms and the non-living parts of their environment, interacting with one another.',
-energy:'Energy is the capacity to cause change or do work. Common forms include kinetic, thermal, chemical and electrical energy.'
-};
+const $=id=>document.getElementById(id);let uploadedFiles=[];
+const knowledge={photosynthesis:'Photosynthesis is how plants and some other organisms use light energy to make chemical energy. They use carbon dioxide and water to make glucose, and oxygen is released.',gravity:'Gravity is the attraction between objects that have mass. Near Earth, gravity pulls objects toward Earth and gives falling objects an acceleration of about 9.8 m/s².',atom:'An atom is a basic unit of matter. It contains protons and neutrons in a nucleus, with electrons around the nucleus.',cell:'A cell is the basic structural and functional unit of living organisms. Plant and animal cells contain structures called organelles that perform different jobs.',html:'HTML stands for HyperText Markup Language. It provides the structure of a web page using elements such as headings, paragraphs, links, images and forms.',javascript:'JavaScript is a programming language commonly used to add logic and interactivity to websites and web applications.',css:'CSS stands for Cascading Style Sheets. It controls the visual appearance and layout of HTML content.',metaphor:'A metaphor compares two unlike things by saying one thing is another, without using “like” or “as”.',simile:'A simile compares two things using words such as “like” or “as”.',industrial:'The Industrial Revolution was a period of major economic and technological change. Manufacturing increasingly moved from hand production toward machines and factories.',canada:'Canada is a country in North America. Its capital is Ottawa, and it is a federal parliamentary constitutional monarchy.',democracy:'A democracy is a system of government in which political power is exercised by the people, directly or through elected representatives.',ecosystem:'An ecosystem includes living organisms and the non-living parts of their environment, interacting with one another.',energy:'Energy is the capacity to cause change or do work. Common forms include kinetic, thermal, chemical and electrical energy.'};
 function normalize(s){return s.toLowerCase().replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim()}
 function setPrompt(x){$('question').value=x;$('question').focus()}
 function findTopic(q){let n=normalize(q);for(const k of Object.keys(knowledge))if(n.includes(k))return k;if(n.includes('plant')&&n.includes('food'))return'photosynthesis';if(n.includes('fall')&&n.includes('earth'))return'gravity';if(n.includes('web page')||n.includes('website'))return'html';if(n.includes('industrial revolution'))return'industrial';return null}
 function equation(q){let m=q.replace(/,/g,'').match(/(?:solve\s+)?([+-]?\d*\.?\d*)\s*x\s*([+-]\s*\d+(?:\.\d+)?)?\s*=\s*([+-]?\s*\d+(?:\.\d+)?)/i);if(!m)return null;let a=parseFloat(m[1]||'1'),b=parseFloat((m[2]||'0').replace(/\s/g,'')),c=parseFloat(m[3].replace(/\s/g,''));if(!a)return'Cannot solve: the x coefficient is zero.';let x=(c-b)/a;return'Step 1: Start with '+a+'x '+(b>=0?'+ ':'')+b+' = '+c+'.\nStep 2: Move the constant: '+a+'x = '+c+' - ('+b+') = '+(c-b)+'.\nStep 3: Divide by '+a+'.\nx = '+x}
 function calculate(){let s=$('math').value.trim();if(!s)return;$('mathAnswer').textContent='';if(!/^[0-9+\-*/().\s%]+$/.test(s)){$('mathAnswer').textContent='Use numbers and basic operators only.';return}try{let v=Function('"use strict";return ('+s.replace(/%/g,'/100')+')')();$('mathAnswer').textContent=Number.isFinite(v)?String(v):'That calculation is not valid.'}catch{$('mathAnswer').textContent='I could not calculate that.'}}
-async function readFile(file){
-let ext=file.name.split('.').pop().toLowerCase();
-if(file.size>20*1024*1024)return'[File is larger than 20 MB, so its contents were not loaded.]';
-if(['txt','md','csv','json','html','htm','css','js','py','java','c','cpp','h','hpp','xml','svg','rtf'].includes(ext)){try{return await file.text()}catch{return'[Could not read this text file.]'}}
-if(file.type.startsWith('text/')){try{return await file.text()}catch{}}
-if(file.type==='application/pdf'||ext==='pdf')return'[PDF attached: '+file.name+'. PDF text extraction is not available in this offline browser version yet.]';
-if(file.type.startsWith('image/'))return'[Image attached: '+file.name+'. The image is available to you, but this offline version does not perform image OCR.]';
-return'[File attached: '+file.name+'. This file type is stored in the page, but its contents cannot be read by the offline helper yet.]';
-}
-async function addFiles(list){
-for(const file of [...list]){
-let existing=uploadedFiles.find(x=>x.name===file.name&&x.size===file.size);
-if(existing)continue;
-let text=await readFile(file);
-uploadedFiles.push({file,text});
-}
-renderFiles();
-}
-function renderFiles(){
-$('fileList').innerHTML='';
-uploadedFiles.forEach((x,i)=>{
-let d=document.createElement('div');d.className='fileitem';
-let name=document.createElement('span');name.textContent=x.file.name+' ('+Math.round(x.file.size/1024)+' KB)';
-let b=document.createElement('button');b.className='secondary';b.textContent='Remove';b.onclick=()=>{uploadedFiles.splice(i,1);renderFiles()};
-d.append(name,b);$('fileList').appendChild(d);
-});
-}
-function clearFiles(){uploadedFiles=[];renderFiles()}
-function fileContext(){
-if(!uploadedFiles.length)return'';
-return '\n\nFILES ATTACHED:\n'+uploadedFiles.map(x=>'--- '+x.file.name+' ---\n'+x.text.slice(0,30000)).join('\n');
-}
-function help(){
-let q=$('question').value.trim(),sub=$('subject').value;
-if(!q&&uploadedFiles.length)q='Summarize the uploaded files and give me the most important things to study.';
-if(!q){$('answer').textContent='Enter a homework question or add a file first.';return}
-let context=fileContext(), n=normalize(q),t=findTopic(q);
-if(context){
-let readable=uploadedFiles.filter(x=>!x.text.startsWith('['));
-if(readable.length){
-let all=readable.map(x=>x.text).join('\n');
-let sentences=all.split(/[.!?]+/).map(x=>x.trim()).filter(Boolean);
-if(/summar|main idea|key point|important|study/.test(n)){$('answer').textContent='Key points from your uploaded files:\n\n'+sentences.slice(0,12).map((x,i)=>(i+1)+'. '+x).join('\n')+'\n\nNow turn these into your own study notes.';return}
-if(/question|what|who|when|where|why|how|explain|define|answer/.test(n)){
-let words=n.split(/\s+/).filter(w=>w.length>3);let hits=sentences.filter(s=>words.some(w=>normalize(s).includes(w))).slice(0,6);
-if(hits.length){$('answer').textContent='Based on your uploaded file(s):\n\n'+hits.join('\n\n')+'\n\nIf your teacher expects a specific answer, compare this with the original lesson notes.';return}
-}
-}
-}
-let eq=equation(q);if(eq){$('answer').textContent=eq;return}
-if(/quiz me/.test(n)){let topic=t||'the topic you entered';$('answer').textContent='Quick quiz about '+topic+':\n\n1. What is the main idea?\n2. What are two important facts?\n3. Give one real example.\n\nAnswer these first, then check your notes.';return}
-if(/flashcard/.test(n)){let topic=t||'your topic';let info=t?knowledge[t]:'Use your class notes to make cards.';$('answer').textContent='Flashcard 1 — What is '+topic+'?\nAnswer: '+info+'\n\nFlashcard 2 — What is one important example or application?\nAnswer: Write this from your notes.';return}
-if(t){$('answer').textContent='Simple explanation:\n'+knowledge[t]+'\n\nStudy step:\nExplain that idea in your own words, then give one example. If your teacher expects a specific definition, compare this with your class notes.';return}
-if(sub==='Math'&&/\d+\s*[+\-*/]\s*\d+/.test(q)){$('answer').textContent='I can solve basic arithmetic. Put the full expression in the Quick Math box below for the calculation.';return}
-let supplied=q.match(/(?:notes|passage|text)\s*[:\-]\s*([\s\S]+)/i);
-if(supplied){let text=supplied[1],sentences=text.split(/[.!?]+/).map(x=>x.trim()).filter(Boolean);$('answer').textContent='Key points from the text:\n\n'+sentences.slice(0,6).map((x,i)=>(i+1)+'. '+x).join('\n')+'\n\nNow rewrite these points in your own words.';return}
-$('answer').textContent='I do not have that topic built into the offline knowledge yet.\n\nUpload your notes/textbook file and ask a question about it, or use “notes: ...” directly in the question box.';
-}
+async function readFile(file){let ext=file.name.split('.').pop().toLowerCase();if(file.size>50*1024*1024)return'[File is larger than 50 MB.]';if(['txt','md','csv','json','html','htm','css','js','py','java','c','cpp','h','hpp','xml','svg','rtf'].includes(ext)||file.type.startsWith('text/')){try{return await file.text()}catch{return'[Could not read this text file.]'}}if(file.type==='application/pdf'||ext==='pdf')return'[PDF attached: '+file.name+'. Text extraction is not available offline yet.]';if(file.type.startsWith('image/'))return'[Image attached: '+file.name+'. OCR is not available offline yet.]';if(file.type.startsWith('audio/')||['mp3','wav','m4a','ogg','flac','aac'].includes(ext))return'[Audio attached: '+file.name+'. You can play it below. Audio transcription is not available offline yet.]';return'[File attached: '+file.name+'. Its contents cannot be read by this offline helper yet.]'}
+async function addFiles(list){for(const file of [...list]){if(uploadedFiles.some(x=>x.file.name===file.name&&x.file.size===file.size))continue;let text=await readFile(file);uploadedFiles.push({file,text,url:file.type.startsWith('audio/')?URL.createObjectURL(file):null})}renderFiles()}
+function renderFiles(){$('fileList').innerHTML='';uploadedFiles.forEach((x,i)=>{let d=document.createElement('div');d.className='fileitem';let top=document.createElement('div');top.className='filetop';let name=document.createElement('span');name.textContent=x.file.name+' ('+Math.round(x.file.size/1024)+' KB)';let b=document.createElement('button');b.className='secondary';b.textContent='Remove';b.onclick=()=>{if(x.url)URL.revokeObjectURL(x.url);uploadedFiles.splice(i,1);renderFiles()};top.append(name,b);d.append(top);if(x.url){let a=document.createElement('audio');a.controls=true;a.src=x.url;d.append(a)}$('fileList').appendChild(d)})}
+function clearFiles(){uploadedFiles.forEach(x=>x.url&&URL.revokeObjectURL(x.url));uploadedFiles=[];renderFiles()}
+function fileContext(){return uploadedFiles.length?'\n\nFILES ATTACHED:\n'+uploadedFiles.map(x=>'--- '+x.file.name+' ---\n'+x.text.slice(0,30000)).join('\n'):''}
+function help(){let q=$('question').value.trim(),sub=$('subject').value;if(!q&&uploadedFiles.length)q='Summarize the uploaded files and give me the most important things to study.';if(!q){$('answer').textContent='Enter a homework question or add a file first.';return}let context=fileContext(),n=normalize(q),t=findTopic(q);if(context){let readable=uploadedFiles.filter(x=>!x.text.startsWith('['));if(readable.length){let all=readable.map(x=>x.text).join('\n'),sentences=all.split(/[.!?]+/).map(x=>x.trim()).filter(Boolean);if(/summar|main idea|key point|important|study/.test(n)){$('answer').textContent='Key points from your uploaded files:\n\n'+sentences.slice(0,12).map((x,i)=>(i+1)+'. '+x).join('\n')+'\n\nNow turn these into your own study notes.';return}if(/question|what|who|when|where|why|how|explain|define|answer/.test(n)){let words=n.split(/\s+/).filter(w=>w.length>3),hits=sentences.filter(s=>words.some(w=>normalize(s).includes(w))).slice(0,6);if(hits.length){$('answer').textContent='Based on your uploaded file(s):\n\n'+hits.join('\n\n');return}}}}let eq=equation(q);if(eq){$('answer').textContent=eq;return}if(/quiz me/.test(n)){let topic=t||'the topic you entered';$('answer').textContent='Quick quiz about '+topic+':\n\n1. What is the main idea?\n2. What are two important facts?\n3. Give one real example?';return}if(/flashcard/.test(n)){let topic=t||'your topic';$('answer').textContent='Flashcard 1 — What is '+topic+'?\nAnswer: '+(t?knowledge[t]:'Use your class notes.')+'\n\nFlashcard 2 — Give one important example.';return}if(t){$('answer').textContent='Simple explanation:\n'+knowledge[t]+'\n\nStudy step:\nExplain the idea in your own words, then give one example.';return}let supplied=q.match(/(?:notes|passage|text)\s*[:\-]\s*([\s\S]+)/i);if(supplied){let s=supplied[1].split(/[.!?]+/).map(x=>x.trim()).filter(Boolean);$('answer').textContent='Key points:\n\n'+s.slice(0,6).map((x,i)=>(i+1)+'. '+x).join('\n');return}$('answer').textContent='I do not have that topic built in yet. Upload your notes/text file and ask a question about it, or use “notes: ...”.'}
 function clearAll(){$('question').value='';$('answer').textContent='Your explanation will appear here.'}
-$('fileInput').addEventListener('change',e=>addFiles(e.target.files));
-$('question').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter')help()});
-$('math').addEventListener('keydown',e=>{if(e.key==='Enter')calculate()});
+$('fileInput').addEventListener('change',e=>addFiles(e.target.files));$('question').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter')help()});$('math').addEventListener('keydown',e=>{if(e.key==='Enter')calculate()});
 </script>
-</body>
-</html>
+</body></html>
