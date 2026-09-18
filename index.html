@@ -5,18 +5,26 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Homework Helper</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:system-ui,Arial;background:#0b1020;color:#eef2ff}header{padding:16px 20px;background:#11182b;border-bottom:1px solid #293552;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}h1{margin:0;font-size:21px}.sub{opacity:.7;font-size:12px}.wrap{max-width:1100px;margin:auto;padding:18px;display:grid;grid-template-columns:1fr 300px;gap:15px}.card{background:#11182b;border:1px solid #293552;border-radius:14px;padding:15px;margin-bottom:15px}textarea,input,select{width:100%;background:#0b1020;color:#fff;border:1px solid #394766;border-radius:9px;padding:10px;font:inherit}textarea{min-height:150px;resize:vertical}button{border:0;border-radius:9px;padding:10px 13px;background:#315bd6;color:#fff;cursor:pointer;font-weight:600}.secondary{background:#293552}.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.answer{white-space:pre-wrap;line-height:1.6;background:#0b1020;border:1px solid #293552;border-radius:10px;padding:13px;min-height:100px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tool{padding:10px;border:1px solid #293552;border-radius:10px;background:#0b1020;cursor:pointer}.tool:hover{border-color:#5574c9}.small{font-size:12px;opacity:.7}@media(max-width:800px){.wrap{grid-template-columns:1fr}}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,Arial;background:#0b1020;color:#eef2ff}header{padding:16px 20px;background:#11182b;border-bottom:1px solid #293552;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}h1{margin:0;font-size:21px}.sub{opacity:.7;font-size:12px}.wrap{max-width:1100px;margin:auto;padding:18px;display:grid;grid-template-columns:1fr 300px;gap:15px}.card{background:#11182b;border:1px solid #293552;border-radius:14px;padding:15px;margin-bottom:15px}textarea,input,select{width:100%;background:#0b1020;color:#fff;border:1px solid #394766;border-radius:9px;padding:10px;font:inherit}textarea{min-height:150px;resize:vertical}button{border:0;border-radius:9px;padding:10px 13px;background:#315bd6;color:#fff;cursor:pointer;font-weight:600}.secondary{background:#293552}.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.answer{white-space:pre-wrap;line-height:1.6;background:#0b1020;border:1px solid #293552;border-radius:10px;padding:13px;min-height:100px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tool{padding:10px;border:1px solid #293552;border-radius:10px;background:#0b1020;cursor:pointer}.tool:hover{border-color:#5574c9}.small{font-size:12px;opacity:.7}.files{margin-top:10px}.filelist{display:flex;flex-direction:column;gap:7px;margin-top:10px}.fileitem{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px;border:1px solid #293552;border-radius:9px;background:#0b1020;font-size:13px}.fileitem button{padding:6px 9px;font-size:12px}.drop{border:1px dashed #5574c9;border-radius:10px;padding:16px;text-align:center;cursor:pointer;margin-top:10px}.drop:hover{background:#151e35}@media(max-width:800px){.wrap{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<header><div><h1>Homework Helper</h1><div class="sub">Free • browser-based • no API • works offline</div></div><div class="sub">Made to help you learn, not just copy answers.</div></header>
+<header><div><h1>Homework Helper</h1><div class="sub">Free • browser-based • no API • works offline</div></div><div class="sub">Add homework files and ask questions about them.</div></header>
 <div class="wrap">
 <main>
 <div class="card">
 <h3>Ask a question</h3>
 <select id="subject"><option>General</option><option>Math</option><option>Science</option><option>English</option><option>History</option><option>Computer Science</option></select>
-<textarea id="question" placeholder="Paste or type your homework question here..."></textarea>
+<textarea id="question" placeholder="Type your homework question here..."></textarea>
 <div class="row"><button onclick="help()">Help me</button><button class="secondary" onclick="clearAll()">Clear</button></div>
+</div>
+<div class="card">
+<h3>Add files</h3>
+<div class="small">Choose one or many files. Text-based files are read directly in your browser. Images, PDFs and other files can be attached and viewed here; the helper can use extracted text when your browser can read it.</div>
+<div class="drop" onclick="$('fileInput').click()">Click to choose files</div>
+<input id="fileInput" type="file" multiple style="display:none">
+<div id="fileList" class="filelist"></div>
+<div class="row"><button class="secondary" onclick="clearFiles()">Remove all files</button></div>
 </div>
 <div class="card"><h3>Helper</h3><div id="answer" class="answer">Your explanation will appear here.</div></div>
 <div class="card"><h3>Quick math</h3><input id="math" placeholder="Example: (25 * 4) + 18 / 2"><div class="row"><button onclick="calculate()">Calculate</button></div><div id="mathAnswer" class="answer" style="margin-top:10px;min-height:50px"></div></div>
@@ -28,12 +36,12 @@
 <div class="tool" onclick="setPrompt('Quiz me about: ')">Quiz me</div>
 <div class="tool" onclick="setPrompt('Make flashcards about: ')">Flashcards</div>
 </div></div>
-<div class="card"><h3>Try these</h3><div class="small">• Solve 3x + 5 = 20<br>• Explain photosynthesis<br>• What caused the Industrial Revolution?<br>• What is a metaphor?<br>• Explain HTML and JavaScript<br>• Calculate the area of a triangle</div></div>
-<div class="card"><h3>Tip</h3><div class="small">For questions this offline helper doesn't know, add the lesson notes or textbook passage to the question box. It can work from the text you provide.</div></div>
+<div class="card"><h3>Try these</h3><div class="small">• Upload a PDF/text file and ask what it means<br>• Upload notes and ask for key points<br>• Solve 3x + 5 = 20<br>• Explain photosynthesis<br>• What caused the Industrial Revolution?<br>• Calculate the area of a triangle</div></div>
 </aside>
 </div>
 <script>
 const $=id=>document.getElementById(id);
+let uploadedFiles=[];
 const knowledge={
 photosynthesis:'Photosynthesis is how plants and some other organisms use light energy to make chemical energy. They use carbon dioxide and water to make glucose, and oxygen is released.',
 gravity:'Gravity is the attraction between objects that have mass. Near Earth, gravity pulls objects toward Earth and gives falling objects an acceleration of about 9.8 m/s².',
@@ -53,26 +61,68 @@ energy:'Energy is the capacity to cause change or do work. Common forms include 
 function normalize(s){return s.toLowerCase().replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim()}
 function setPrompt(x){$('question').value=x;$('question').focus()}
 function findTopic(q){let n=normalize(q);for(const k of Object.keys(knowledge))if(n.includes(k))return k;if(n.includes('plant')&&n.includes('food'))return'photosynthesis';if(n.includes('fall')&&n.includes('earth'))return'gravity';if(n.includes('web page')||n.includes('website'))return'html';if(n.includes('industrial revolution'))return'industrial';return null}
-function equation(q){
-let m=q.replace(/,/g,'').match(/(?:solve\s+)?([+-]?\d*\.?\d*)\s*x\s*([+-]\s*\d+(?:\.\d+)?)?\s*=\s*([+-]?\s*\d+(?:\.\d+)?)/i);
-if(!m)return null;let a=parseFloat(m[1]||'1'),b=parseFloat((m[2]||'0').replace(/\s/g,'')),c=parseFloat(m[3].replace(/\s/g,''));if(!a)return'Cannot solve: the x coefficient is zero.';let x=(c-b)/a;return'Step 1: Start with '+a+'x '+(b>=0?'+ ':'')+b+' = '+c+'.\nStep 2: Move the constant: '+a+'x = '+c+' - ('+b+') = '+(c-b)+'.\nStep 3: Divide by '+a+'.\nx = '+x;}
-function calculate(){
-let s=$('math').value.trim();if(!s)return;$('mathAnswer').textContent='';if(!/^[0-9+\-*/().\s%]+$/.test(s)){ $('mathAnswer').textContent='Use numbers and basic operators only.';return}
-try{let v=Function('"use strict";return ('+s.replace(/%/g,'/100')+')')();$('mathAnswer').textContent=Number.isFinite(v)?String(v):'That calculation is not valid.'}catch{$('mathAnswer').textContent='I could not calculate that.'}
+function equation(q){let m=q.replace(/,/g,'').match(/(?:solve\s+)?([+-]?\d*\.?\d*)\s*x\s*([+-]\s*\d+(?:\.\d+)?)?\s*=\s*([+-]?\s*\d+(?:\.\d+)?)/i);if(!m)return null;let a=parseFloat(m[1]||'1'),b=parseFloat((m[2]||'0').replace(/\s/g,'')),c=parseFloat(m[3].replace(/\s/g,''));if(!a)return'Cannot solve: the x coefficient is zero.';let x=(c-b)/a;return'Step 1: Start with '+a+'x '+(b>=0?'+ ':'')+b+' = '+c+'.\nStep 2: Move the constant: '+a+'x = '+c+' - ('+b+') = '+(c-b)+'.\nStep 3: Divide by '+a+'.\nx = '+x}
+function calculate(){let s=$('math').value.trim();if(!s)return;$('mathAnswer').textContent='';if(!/^[0-9+\-*/().\s%]+$/.test(s)){$('mathAnswer').textContent='Use numbers and basic operators only.';return}try{let v=Function('"use strict";return ('+s.replace(/%/g,'/100')+')')();$('mathAnswer').textContent=Number.isFinite(v)?String(v):'That calculation is not valid.'}catch{$('mathAnswer').textContent='I could not calculate that.'}}
+async function readFile(file){
+let ext=file.name.split('.').pop().toLowerCase();
+if(file.size>20*1024*1024)return'[File is larger than 20 MB, so its contents were not loaded.]';
+if(['txt','md','csv','json','html','htm','css','js','py','java','c','cpp','h','hpp','xml','svg','rtf'].includes(ext)){try{return await file.text()}catch{return'[Could not read this text file.]'}}
+if(file.type.startsWith('text/')){try{return await file.text()}catch{}}
+if(file.type==='application/pdf'||ext==='pdf')return'[PDF attached: '+file.name+'. PDF text extraction is not available in this offline browser version yet.]';
+if(file.type.startsWith('image/'))return'[Image attached: '+file.name+'. The image is available to you, but this offline version does not perform image OCR.]';
+return'[File attached: '+file.name+'. This file type is stored in the page, but its contents cannot be read by the offline helper yet.]';
+}
+async function addFiles(list){
+for(const file of [...list]){
+let existing=uploadedFiles.find(x=>x.name===file.name&&x.size===file.size);
+if(existing)continue;
+let text=await readFile(file);
+uploadedFiles.push({file,text});
+}
+renderFiles();
+}
+function renderFiles(){
+$('fileList').innerHTML='';
+uploadedFiles.forEach((x,i)=>{
+let d=document.createElement('div');d.className='fileitem';
+let name=document.createElement('span');name.textContent=x.file.name+' ('+Math.round(x.file.size/1024)+' KB)';
+let b=document.createElement('button');b.className='secondary';b.textContent='Remove';b.onclick=()=>{uploadedFiles.splice(i,1);renderFiles()};
+d.append(name,b);$('fileList').appendChild(d);
+});
+}
+function clearFiles(){uploadedFiles=[];renderFiles()}
+function fileContext(){
+if(!uploadedFiles.length)return'';
+return '\n\nFILES ATTACHED:\n'+uploadedFiles.map(x=>'--- '+x.file.name+' ---\n'+x.text.slice(0,30000)).join('\n');
 }
 function help(){
-let q=$('question').value.trim(),sub=$('subject').value;if(!q){$('answer').textContent='Enter a homework question first.';return}
+let q=$('question').value.trim(),sub=$('subject').value;
+if(!q&&uploadedFiles.length)q='Summarize the uploaded files and give me the most important things to study.';
+if(!q){$('answer').textContent='Enter a homework question or add a file first.';return}
+let context=fileContext(), n=normalize(q),t=findTopic(q);
+if(context){
+let readable=uploadedFiles.filter(x=>!x.text.startsWith('['));
+if(readable.length){
+let all=readable.map(x=>x.text).join('\n');
+let sentences=all.split(/[.!?]+/).map(x=>x.trim()).filter(Boolean);
+if(/summar|main idea|key point|important|study/.test(n)){$('answer').textContent='Key points from your uploaded files:\n\n'+sentences.slice(0,12).map((x,i)=>(i+1)+'. '+x).join('\n')+'\n\nNow turn these into your own study notes.';return}
+if(/question|what|who|when|where|why|how|explain|define|answer/.test(n)){
+let words=n.split(/\s+/).filter(w=>w.length>3);let hits=sentences.filter(s=>words.some(w=>normalize(s).includes(w))).slice(0,6);
+if(hits.length){$('answer').textContent='Based on your uploaded file(s):\n\n'+hits.join('\n\n')+'\n\nIf your teacher expects a specific answer, compare this with the original lesson notes.';return}
+}
+}
+}
 let eq=equation(q);if(eq){$('answer').textContent=eq;return}
-let n=normalize(q),t=findTopic(q);
 if(/quiz me/.test(n)){let topic=t||'the topic you entered';$('answer').textContent='Quick quiz about '+topic+':\n\n1. What is the main idea?\n2. What are two important facts?\n3. Give one real example.\n\nAnswer these first, then check your notes.';return}
 if(/flashcard/.test(n)){let topic=t||'your topic';let info=t?knowledge[t]:'Use your class notes to make cards.';$('answer').textContent='Flashcard 1 — What is '+topic+'?\nAnswer: '+info+'\n\nFlashcard 2 — What is one important example or application?\nAnswer: Write this from your notes.';return}
 if(t){$('answer').textContent='Simple explanation:\n'+knowledge[t]+'\n\nStudy step:\nExplain that idea in your own words, then give one example. If your teacher expects a specific definition, compare this with your class notes.';return}
-if(sub==='Math'){let m=q.match(/(\d+(?:\.\d+)?)\s*[+\-*/]\s*(\d+(?:\.\d+)?)/);if(m){$('answer').textContent='I can solve basic arithmetic. Put the full expression in the Quick Math box below for the calculation.';return}}
+if(sub==='Math'&&/\d+\s*[+\-*/]\s*\d+/.test(q)){$('answer').textContent='I can solve basic arithmetic. Put the full expression in the Quick Math box below for the calculation.';return}
 let supplied=q.match(/(?:notes|passage|text)\s*[:\-]\s*([\s\S]+)/i);
-if(supplied){let text=supplied[1];let sentences=text.split(/[.!?]+/).map(x=>x.trim()).filter(Boolean);$('answer').textContent='Key points from the text:\n\n'+sentences.slice(0,6).map((x,i)=>(i+1)+'. '+x).join('\n')+'\n\nNow rewrite these points in your own words.';return}
-$('answer').textContent='I do not have that topic built into the offline knowledge yet.\n\nTry one of these:\n• Add your class notes after “notes: ” and I will pull out key points.\n• Ask for a simpler explanation.\n• Ask for a step-by-step method.\n• Use the Quick Math tool for arithmetic.\n\nFor example:\nnotes: Photosynthesis uses light, carbon dioxide and water to produce glucose and oxygen.');
+if(supplied){let text=supplied[1],sentences=text.split(/[.!?]+/).map(x=>x.trim()).filter(Boolean);$('answer').textContent='Key points from the text:\n\n'+sentences.slice(0,6).map((x,i)=>(i+1)+'. '+x).join('\n')+'\n\nNow rewrite these points in your own words.';return}
+$('answer').textContent='I do not have that topic built into the offline knowledge yet.\n\nUpload your notes/textbook file and ask a question about it, or use “notes: ...” directly in the question box.';
 }
 function clearAll(){$('question').value='';$('answer').textContent='Your explanation will appear here.'}
+$('fileInput').addEventListener('change',e=>addFiles(e.target.files));
 $('question').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter')help()});
 $('math').addEventListener('keydown',e=>{if(e.key==='Enter')calculate()});
 </script>
